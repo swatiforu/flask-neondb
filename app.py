@@ -50,5 +50,17 @@ def update_user(id):
 
     return jsonify({"message": "User updated", "user": {"id": user.id, "name": user.name, "email": user.email}})
 
+#Delete user
+@app.route("/users/<int:id>", methods=["DELETE"])
+def delete_user(id):
+    user = Users.query.get(id)
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+    
+    db.session.delete(user)
+    db.session.commit()
+
+    return jsonify({"message": "User deleted"})
+
 if __name__=="__main__":
     app.run(debug=True)
