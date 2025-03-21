@@ -9,7 +9,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
-class User(db.Model):
+class Users(db.Model):
     id = db.Column(db.Integer, primary_key= True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
@@ -21,13 +21,22 @@ with app.app_context():
 def home():
     return jsonify({"message": "Neondb working with Flask"})
 
+#Create User
 @app.route("/users", methods=["POST"])
 def add_user():
     data = request.json
-    new_user = User(name=data["name"], email=data["email"])
+    new_user = Users(name=data["name"], email=data["email"])
     db.session.add(new_user)
     db.session.commit()
     return jsonify({"message": "User added", "user":{"id": new_user.id, "email": new_user.email}})
+
+#Get all users
+@app.route("/users", methods=["GET"])
+def get_users():
+    users = Users.query.all()
+    return jsonify([{"id": user.id, "name": user.name, "email": user.email} for user in users])
+
+
 
 if __name__=="__main__":
     app.run(debug=True)
