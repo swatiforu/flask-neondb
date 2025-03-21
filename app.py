@@ -36,7 +36,19 @@ def get_users():
     users = Users.query.all()
     return jsonify([{"id": user.id, "name": user.name, "email": user.email} for user in users])
 
+#Update user
+@app.route("/users/<int:id>", methods=["PUT"])
+def update_user(id):
+    user = Users.query.get(id)
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+    
+    data = request.json
+    user.name= data.get("name", user.name)
+    user.email= data.get("email", user.email)
+    db.session.commit()
 
+    return jsonify({"message": "User updated", "user": {"id": user.id, "name": user.name, "email": user.email}})
 
 if __name__=="__main__":
     app.run(debug=True)
