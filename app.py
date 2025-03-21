@@ -21,5 +21,13 @@ with app.app_context():
 def home():
     return jsonify({"message": "Neondb working with Flask"})
 
+@app.route("/users", methods=["POST"])
+def add_user():
+    data = request.json
+    new_user = User(name=data["name"], email=data["email"])
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({"message": "User added", "user":{"id": new_user.id, "email": new_user.email}})
+
 if __name__=="__main__":
     app.run(debug=True)
